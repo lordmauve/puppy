@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QTabWidget, QToolBar, QAction
+    QWidget, QVBoxLayout, QTabWidget, QToolBar, QAction, QSizePolicy
 )
 from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtSvg import QSvgWidget
 from .editorpane import EditorPane
 from ..resources import load_icon
 
@@ -134,6 +135,11 @@ class Editor(QWidget):
         editor.setText(text)
         self.tabs.addTab(editor, path)
 
+    def add_svg(self, title, data):
+        editor = QSvgWidget()
+        editor.load(data)
+        self.tabs.addTab(editor, title)
+
     def zoom_in(self):
         """Make the text BIGGER."""
         for tab in self.tabs:
@@ -147,6 +153,9 @@ class Editor(QWidget):
     def save_all(self):
         """Save all files."""
         for tab in self.tabs:
-            if tab.isModified():
+            # FIXME: need a better definition of which tabs should be saved
+            # Or create a signal for the saving of this whole component and
+            # register callbacks on the panes when they are created
+            if isinstance(tab, EditorPane) and tab.isModified():
                 self.project.write_file(tab.path, tab.text())
                 tab.setModified(False)

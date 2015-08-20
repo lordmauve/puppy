@@ -3,6 +3,7 @@ import os
 from jinja2 import Environment, PackageLoader
 from .ui.editor import Editor
 from .ui.outputpane import OutputPane
+from .resources import load_svg
 
 # The encoding to use for reading/writing files
 ENCODING = 'utf8'
@@ -56,6 +57,7 @@ class HelloWorld(Project):
 
     def build_ui(self, parent=None):
         self.ui = Editor(self, parent=parent)
+        self.ui.add_svg('About Hello World', load_svg('about_hello_world.svg'))
         self.ui.add_tab('hello_world.py')
         self.outputpane = OutputPane(parent=self.ui)
         self.ui.add_pane(self.outputpane)
