@@ -8,4 +8,4 @@ Ubuntu Linux
 
    .. code-block:: bash
 
-        $ apt-get install python3 python3-pyqt4 python3-pyqt4.qsci
+        $ apt-get install python3 python3-pyqt4 python3-pyqt4.qsci python3-jinja2
