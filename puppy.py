@@ -27,13 +27,14 @@ from PyQt5.QtCore import QSize, Qt
 from PyQt5.Qsci import QsciScintilla, QsciLexerPython
 
 
+# We should probably create a default directory within this directory.
 ROOT = expanduser('~')
 
 
-# FONT related constants
+# FONT related constants:
 DEFAULT_FONT_SIZE = 16
 DEFAULT_FONT = 'Bitstream Vera Sans Mono'
-# Platform specific alternatives
+# Platform specific alternatives...
 if sys.platform == 'win32':
     DEFAULT_FONT = 'Consolas'
 elif sys.platform == 'darwin':
@@ -45,7 +46,9 @@ class PythonLexer(QsciLexerPython):
     Defines the styles associated with various types of token used in Python.
     """
 
-    property_id = {
+    # The names of tokens and their associated id used by Scintilla
+    # (apparently).
+    token_id = {
         'Default': 0,
         'Comment': 1,
         'Number': 2,
@@ -64,6 +67,9 @@ class PythonLexer(QsciLexerPython):
         'Decorator': 15,
     }
 
+    # Each token type is associated with a list containing the font to use,
+    # the font colour, the font size, bold flag, italic flag, and background
+    # colour.
     default_style = {
         'UnclosedString': [DEFAULT_FONT, '#000000', DEFAULT_FONT_SIZE, False,
                            False, '#00fd00'],
@@ -104,7 +110,7 @@ class PythonLexer(QsciLexerPython):
     def __init__(self):
         QsciLexerPython.__init__(self)
         for key, attrib in self.default_style.items():
-            value = self.property_id[key]
+            value = self.token_id[key]
             self.setColor(QColor(attrib[1]), value)
             self.setEolFill(True, value)
             self.setPaper(QColor(attrib[5]), value)
@@ -117,6 +123,9 @@ class PythonLexer(QsciLexerPython):
         self.setDefaultPaper(QColor("#ffffff"))
 
     def keywords(self, flag):
+        """
+        Returns a list of Python keywords.
+        """
         if flag == 1:
             return ' '.join(keyword.kwlist)
         return ' '.join(dir(__builtins__))
@@ -133,12 +142,14 @@ class EditorPane(QsciScintilla):
 
     def configure(self):
         """Set up the editor component."""
+        # Font information
         font = QFont(DEFAULT_FONT)
         font.setFixedPitch(True)
         font.setPointSize(DEFAULT_FONT_SIZE)
         self.setFont(font)
+        # Generic editor settings
         self.setUtf8(True)
-        self.setAutoIndent(True)
+        self.setAutoIndent(True)  # DOES NOT SEEM TO DO ANYTHING!!!?!?!!
         self.setIndentationsUseTabs(False)
         self.setIndentationWidth(4)
         self.setTabWidth(4)
@@ -146,6 +157,7 @@ class EditorPane(QsciScintilla):
         self.setMarginLineNumbers(0, True)
         self.setMarginWidth(0, 50)
         self.setBraceMatching(QsciScintilla.SloppyBraceMatch)
+        # Use the lexer defined above
         lexer = PythonLexer()
         self.setLexer(lexer)
         self.SendScintilla(QsciScintilla.SCI_SETHSCROLLBAR, 0)
@@ -168,6 +180,7 @@ class ButtonBar(QToolBar):
         self.setToolButtonStyle(3)
         self.setContextMenuPolicy(Qt.PreventContextMenu)
         self.setObjectName("StandardToolBar")
+        # Create actions to be added to the button bar.
         self.new_python_file_act = QAction(
             QIcon(os.path.join("resources", "images", "new")),
             "New", self,
@@ -208,6 +221,7 @@ class ButtonBar(QToolBar):
             "Help", self,
             statusTip="Help about this editor",
             triggered=self._help)
+        # Add the actions to the button bar.
         self.addAction(self.new_python_file_act)
         self.addAction(self.open_python_file_act)
         self.addAction(self.save_python_file_act)
@@ -221,44 +235,51 @@ class ButtonBar(QToolBar):
 
     def _new_python_file():
         """
+        Handle the creation of a new Python file.
         """
         pass
 
     def _open_python_file():
         """
+        Handle opening an existing Python file.
         """
         pass
 
     def _save_python_file():
         """
+        Save the current Python file.
         """
         pass
 
     def _run_python_file():
         """
+        Attempt to run the current file.
         """
         pass
 
     def _build_python_file():
         """
+        Generate a .hex file to flash onto a micro:bit.
         """
         pass
 
     def _zoom_in():
         """
+        Make the text BIGGER.
         """
         pass
 
     def _zoom_out():
         """
+        Make the text smaller.
         """
         pass
 
     def _help():
         """
+        Display some help about the editor.
         """
         pass
-
 
 
 class Puppy(QWidget):
@@ -267,15 +288,19 @@ class Puppy(QWidget):
     """
     def __init__(self, parent=None):
         super().__init__(parent)
-
+        # Gotta have a nice icon.
         self.setWindowIcon(QIcon(os.path.join('resources', 'images', 'icon')))
         self.setWindowTitle("Puppy IDE")
+        # Vertical box layout.
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
+        # The application has two aspects to it: buttons and the editor.
         self.buttons = ButtonBar()
         self.editor = EditorPane()
+        # Add the buttons and editor to the user inteface.
         self.layout.addWidget(self.buttons)
         self.layout.addWidget(self.editor)
+        # Ensure we have a minimal sensible size for the application.
         self.setMinimumSize(800, 600)
 
 
