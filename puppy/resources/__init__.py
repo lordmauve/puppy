@@ -1,4 +1,4 @@
-from pkg_resources import resource_filename
+from pkg_resources import resource_filename, resource_string
 
 from PyQt5.QtGui import QPixmap, QIcon
 
@@ -15,3 +15,8 @@ def load_icon(name):
 def load_pixmap(name):
     """Load a pixmap from the resources directory."""
     return QPixmap(path(name))
+
+
+def load_stylesheet(name):
+    """Load a CSS stylesheet from the resources directory."""
+    return resource_string(__name__, "css/" + name).decode('utf8')

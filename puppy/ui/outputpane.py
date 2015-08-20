@@ -14,6 +14,7 @@ class OutputPane(QTextEdit):
         self.setAcceptRichText(False)
         self.setReadOnly(True)
         self.setLineWrapMode(QTextEdit.NoWrap)
+        self.setObjectName('outputpane')
 
     def append(self, txt):
         tc = self.textCursor()
@@ -38,7 +39,6 @@ class OutputPane(QTextEdit):
         self.process.setProcessEnvironment(env)
         if cwd:
             self.process.setWorkingDirectory(cwd)
-        # self.process.error.connect(self.on_error)
         # self.process.stateChanged.connect(self.stateChanged)
         self.process.readyReadStandardOutput.connect(self.on_stdout_read)
         self.process.readyReadStandardError.connect(self.on_stderr_read)

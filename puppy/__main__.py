@@ -22,7 +22,7 @@ from PyQt5.QtWidgets import (
     QApplication, QSplashScreen, QStackedWidget, QDesktopWidget
 )
 
-from .resources import load_icon, load_pixmap
+from .resources import load_icon, load_pixmap, load_stylesheet
 from .projects import HelloWorld
 
 # We should probably create a default directory within this directory.
@@ -72,6 +72,7 @@ class Puppy(QStackedWidget):
 def main():
     # The app object is the application running on your computer.
     app = QApplication(sys.argv)
+    app.setStyleSheet(load_stylesheet('puppy.css'))
 
     # A splash screen is a logo that appears when you start up the application.
     # The image to be "splashed" on your screen is in the resources/images
