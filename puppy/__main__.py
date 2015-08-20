@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import sys
 import os.path
 from PyQt5.QtWidgets import (
-    QApplication, QSplashScreen, QStackedWidget
+    QApplication, QSplashScreen, QStackedWidget, QDesktopWidget
 )
 
 from .resources import load_icon, load_pixmap
@@ -50,6 +50,17 @@ class Puppy(QStackedWidget):
         self.projects[project.name] = project
         self.addWidget(project.build_ui(self))
 
+    def autosize_window(self):
+        screen = QDesktopWidget().screenGeometry()
+        w = int(screen.width() * 0.8)
+        h = int(screen.height() * 0.8)
+        self.resize(w, h)
+        size = self.geometry()
+        self.move(
+            (screen.width() - size.width()) / 2,
+            (screen.height() - size.height()) / 2
+        )
+
 
 def main():
     # The app object is the application running on your computer.
@@ -67,11 +78,12 @@ def main():
 
     proj_root = os.path.join(ROOT, 'hello_world')
     proj = HelloWorld(proj_root, {})
-    proj.init_files()
+    if not os.path.isdir(proj_root):
+        proj.init_files()
     the_editor.add_project(proj)
 
     the_editor.show()
-    proj.ui.save_all()
+    the_editor.autosize_window()
 
     # Remove the splash when the_editor has finished setting itself up.
     splash.finish(the_editor)

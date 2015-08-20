@@ -2,6 +2,7 @@ import os.path
 import os
 from jinja2 import Environment, PackageLoader
 from .ui.editor import Editor
+from .ui.outputpane import OutputPane
 
 # The encoding to use for reading/writing files
 ENCODING = 'utf8'
@@ -56,7 +57,13 @@ class HelloWorld(Project):
     def build_ui(self, parent=None):
         self.ui = Editor(self, parent=parent)
         self.ui.add_tab('hello_world.py')
+        self.outputpane = OutputPane(parent=self.ui)
+        self.ui.add_pane(self.outputpane)
         return self.ui
+
+    def run(self):
+        self.ui.save_all()
+        self.outputpane.run('python3', 'hello_world.py', cwd=self.root)
 
 
 # This is a list of all the project templates we know how to build

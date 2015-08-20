@@ -5,7 +5,7 @@ from PyQt5.QtGui import QColor, QFont
 
 
 # FONT related constants:
-DEFAULT_FONT_SIZE = 16
+DEFAULT_FONT_SIZE = 12
 DEFAULT_FONT = 'Bitstream Vera Sans Mono'
 # Platform specific alternatives...
 if sys.platform == 'win32':

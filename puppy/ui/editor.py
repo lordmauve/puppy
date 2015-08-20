@@ -34,7 +34,7 @@ class ButtonBar(QToolBar):
             load_icon("run"),
             "Run", self,
             statusTip="Run your Python file",
-            triggered=self._run_python_file)
+            triggered=self.editor.project.run)
         # self.build_python_file_act = QAction(
         #     load_icon("build"),
         #     "Build", self,
@@ -90,18 +90,6 @@ class ButtonBar(QToolBar):
         """
         pass
 
-    def _zoom_in():
-        """
-        Make the text BIGGER.
-        """
-        pass
-
-    def _zoom_out():
-        """
-        Make the text smaller.
-        """
-        pass
-
 
 class TabPane(QTabWidget):
     def __len__(self):
@@ -136,6 +124,9 @@ class Editor(QWidget):
         # Ensure we have a minimal sensible size for the application.
         self.setMinimumSize(800, 600)
 
+    def add_pane(self, pane):
+        self.layout.addWidget(pane)
+
     def add_tab(self, path):
         text = self.project.read_file(path)
         editor = EditorPane()
@@ -144,10 +135,12 @@ class Editor(QWidget):
         self.tabs.addTab(editor, path)
 
     def zoom_in(self):
+        """Make the text BIGGER."""
         for tab in self.tabs:
             tab.zoomIn(2)
 
     def zoom_out(self):
+        """Make the text smaller."""
         for tab in self.tabs:
             tab.zoomOut(2)
 
