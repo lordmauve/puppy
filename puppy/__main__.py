@@ -37,11 +37,17 @@ class Puppy(QStackedWidget):
         super().__init__(parent)
         # Gotta have a nice icon.
         self.setWindowIcon(load_icon('icon'))
-        self.setWindowTitle("Puppy IDE")
+        self.update_title()
 
         # Ensure we have a minimal sensible size for the application.
         self.setMinimumSize(800, 600)
         self.projects = {}
+
+    def update_title(self, project=None):
+        title = "Puppy IDE"
+        if project:
+            title += ' - ' + project.root
+        self.setWindowTitle(title)
 
     def add_project(self, project):
         """Add a project to the UI and show it."""
@@ -49,6 +55,7 @@ class Puppy(QStackedWidget):
             return
         self.projects[project.name] = project
         self.addWidget(project.build_ui(self))
+        self.update_title(project)
 
     def autosize_window(self):
         screen = QDesktopWidget().screenGeometry()
