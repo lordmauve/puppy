@@ -51,28 +51,30 @@ class Puppy(QStackedWidget):
         self.addWidget(project.build_ui(self))
 
 
-# The app object is the application running on your computer.
-app = QApplication(sys.argv)
+def main():
+    # The app object is the application running on your computer.
+    app = QApplication(sys.argv)
 
-# A splash screen is a logo that appears when you start up the application.
-# The image to be "splashed" on your screen is in the resources/images
-# directory.
-splash = QSplashScreen(load_pixmap('splash'))
-# Show the splash.
-splash.show()
+    # A splash screen is a logo that appears when you start up the application.
+    # The image to be "splashed" on your screen is in the resources/images
+    # directory.
+    splash = QSplashScreen(load_pixmap('splash'))
+    # Show the splash.
+    splash.show()
 
-# Make the editor with the Brian class defined above.
-the_editor = Puppy()
+    # Make the editor with the Brian class defined above.
+    the_editor = Puppy()
 
-proj_root = os.path.join(ROOT, 'hello_world')
-proj = HelloWorld(proj_root, {})
-proj.init_files()
-the_editor.add_project(proj)
+    proj_root = os.path.join(ROOT, 'hello_world')
+    proj = HelloWorld(proj_root, {})
+    proj.init_files()
+    the_editor.add_project(proj)
 
-the_editor.show()
+    the_editor.show()
+    proj.ui.save_all()
 
-# Remove the splash when the_editor has finished setting itself up.
-splash.finish(the_editor)
+    # Remove the splash when the_editor has finished setting itself up.
+    splash.finish(the_editor)
 
-# Stop the program after application finishes executing.
-sys.exit(app.exec_())
+    # Stop the program after application finishes executing.
+    sys.exit(app.exec_())

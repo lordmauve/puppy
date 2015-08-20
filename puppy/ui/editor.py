@@ -12,8 +12,9 @@ class ButtonBar(QToolBar):
     their behaviour.
     """
 
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, editor):
+        super().__init__(editor)
+        self.editor = editor
         self.configure()
 
     def configure(self):
@@ -24,49 +25,37 @@ class ButtonBar(QToolBar):
         self.setContextMenuPolicy(Qt.PreventContextMenu)
         self.setObjectName("StandardToolBar")
         # Create actions to be added to the button bar.
-        self.new_python_file_act = QAction(
-            load_icon("new"),
-            "New", self,
-            statusTip="Create a new Python file",
-            triggered=self._new_python_file)
-        self.open_python_file_act = QAction(
-            load_icon("open"),
-            "Open", self,
-            statusTip="Open a Python file",
-            triggered=self._open_python_file)
         self.save_python_file_act = QAction(
             load_icon("save"),
             "Save", self,
-            statusTip="Save a Python file",
-            triggered=self._save_python_file)
+            statusTip="Save the project",
+            triggered=self.editor.save_all)
         self.run_python_file_act = QAction(
             load_icon("run"),
             "Run", self,
             statusTip="Run your Python file",
             triggered=self._run_python_file)
-        self.build_python_file_act = QAction(
-            load_icon("build"),
-            "Build", self,
-            statusTip="Build Python into Hex file",
-            triggered=self._build_python_file)
+        # self.build_python_file_act = QAction(
+        #     load_icon("build"),
+        #     "Build", self,
+        #     statusTip="Build Python into Hex file",
+        #     triggered=self._build_python_file)
         self.zoom_in_act = QAction(
             load_icon("zoom-in"),
             "Zoom in", self,
             statusTip="Make the text bigger",
-            triggered=self._zoom_in)
+            triggered=self.editor.zoom_in)
         self.zoom_out_act = QAction(
             load_icon("zoom-out"),
             "Zoom out", self,
             statusTip="Make the text smaller",
-            triggered=self._zoom_out)
+            triggered=self.editor.zoom_out)
 
         # Add the actions to the button bar.
-        self.addAction(self.new_python_file_act)
-        self.addAction(self.open_python_file_act)
+
         self.addAction(self.save_python_file_act)
-        self.addSeparator()
         self.addAction(self.run_python_file_act)
-        self.addAction(self.build_python_file_act)
+        # self.addAction(self.build_python_file_act)
         self.addSeparator()
         self.addAction(self.zoom_in_act)
         self.addAction(self.zoom_out_act)
@@ -114,6 +103,17 @@ class ButtonBar(QToolBar):
         pass
 
 
+class TabPane(QTabWidget):
+    def __len__(self):
+        return self.count()
+
+    def __getitem__(self, index):
+        t = self.widget(index)
+        if not t:
+            raise IndexError(index)
+        return t
+
+
 class Editor(QWidget):
     """
     Represents the application.
@@ -127,8 +127,8 @@ class Editor(QWidget):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         # The application has two aspects to it: buttons and the editor.
-        self.buttons = ButtonBar(parent=self)
-        self.tabs = QTabWidget(parent=self)
+        self.buttons = ButtonBar(self)
+        self.tabs = TabPane(parent=self)
 
         # Add the buttons and editor to the user inteface.
         self.layout.addWidget(self.buttons)
@@ -142,3 +142,18 @@ class Editor(QWidget):
         editor.path = path
         editor.setText(text)
         self.tabs.addTab(editor, path)
+
+    def zoom_in(self):
+        for tab in self.tabs:
+            tab.zoomIn(2)
+
+    def zoom_out(self):
+        for tab in self.tabs:
+            tab.zoomOut(2)
+
+    def save_all(self):
+        """Save all files."""
+        for tab in self.tabs:
+            if tab.isModified():
+                self.project.write_file(tab.path, tab.text())
+                tab.setModified(False)

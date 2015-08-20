@@ -134,3 +134,6 @@ class EditorPane(QsciScintilla):
         lexer = PythonLexer()
         self.setLexer(lexer)
         self.SendScintilla(QsciScintilla.SCI_SETHSCROLLBAR, 0)
+
+    def needs_write(self):
+        return self.isModified()
