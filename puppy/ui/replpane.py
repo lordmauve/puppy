@@ -1,12 +1,30 @@
 from PyQt5.QtWidgets import QTextEdit
 from PyQt5.QtGui import QTextCursor
 from PyQt5.QtCore import QIODevice
-from PyQt5.QtSerialPort import QSerialPort
+from PyQt5.QtSerialPort import QSerialPort, QSerialPortInfo
 
 # TODO:
 #   - shutdown serial port cleanly on exit
 #   - use monospace font
 #   - get backspace and arrow keys working
+
+MICROBIT_PID = 516
+MICROBIT_VID = 3368
+
+
+def find_microbit():
+    """
+    Returns the port for the first microbit it finds connected to the host
+    computer. If no microbit is found, returns None.
+    """
+    available_ports = QSerialPortInfo.availablePorts()
+    for port in available_ports:
+        pid = port.productIdentifier()
+        vid = port.vendorIdentifier()
+        if pid == MICROBIT_PID and vid == MICROBIT_VID:
+            return port.portName()
+    return None
+
 
 class REPLPane(QTextEdit):
     def __init__(self, port, parent=None):
@@ -17,6 +35,7 @@ class REPLPane(QTextEdit):
         self.setObjectName('replpane')
 
         # open the serial port
+        import pdb; pdb.set_trace()
         self.serial = QSerialPort(self)
         self.serial.setPortName(port)
         self.serial.setBaudRate(115200)
