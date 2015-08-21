@@ -122,7 +122,7 @@ class EditorPane(QsciScintilla):
         self.setFont(font)
         # Generic editor settings
         self.setUtf8(True)
-        self.setAutoIndent(True)  # DOES NOT SEEM TO DO ANYTHING!!!?!?!!
+        self.setAutoIndent(True)
         self.setIndentationsUseTabs(False)
         self.setIndentationWidth(4)
         self.setTabWidth(4)
@@ -130,9 +130,9 @@ class EditorPane(QsciScintilla):
         self.setMarginLineNumbers(0, True)
         self.setMarginWidth(0, 50)
         self.setBraceMatching(QsciScintilla.SloppyBraceMatch)
-        # Use the lexer defined above
-        lexer = PythonLexer()
-        self.setLexer(lexer)
+        # Use the lexer defined above (and must save a reference to it)
+        self.lexer = PythonLexer()
+        self.setLexer(self.lexer)
         self.SendScintilla(QsciScintilla.SCI_SETHSCROLLBAR, 0)
 
     def needs_write(self):
