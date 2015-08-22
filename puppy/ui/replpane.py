@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QTextEdit
 from PyQt5.QtGui import QTextCursor
 from PyQt5.QtCore import QIODevice
+from PyQt5.QtCore import Qt
 from PyQt5.QtSerialPort import QSerialPort, QSerialPortInfo
 
 # TODO:
@@ -27,15 +28,22 @@ def find_microbit():
 
 
 class REPLPane(QTextEdit):
+    """
+    REPL = Read, Evaluate, Print, Loop.
+
+    This widget represents a REPL client connected to a BBC micro:bit.
+    """
     def __init__(self, port, parent=None):
         super().__init__(parent)
         self.setAcceptRichText(False)
         self.setReadOnly(False)
         self.setLineWrapMode(QTextEdit.NoWrap)
         self.setObjectName('replpane')
+        # A flag to indicate that we've sent some sort of escape
+        # character e.g. \b
+        self.escape_flag = False
 
         # open the serial port
-        import pdb; pdb.set_trace()
         self.serial = QSerialPort(self)
         self.serial.setPortName(port)
         self.serial.setBaudRate(115200)
@@ -49,14 +57,39 @@ class REPLPane(QTextEdit):
         self.append(self.serial.readAll())
 
     def keyPressEvent(self, data):
-        self.serial.write(bytes(data.text(), 'utf8'))
+        self.escape_flag = False
+        text = data.text()
+        msg = bytes(text, 'utf8')
+        key = data.key()
+        if key == Qt.Key_Backspace:
+            msg = '\b'
+            self.delete()
+            self.escape_flag = True
+        elif key == Qt.Key_Up:
+            msg = '\x1B[A'
+        elif key == Qt.Key_Down:
+            msg = '\x1B[B'
+        self.serial.write(msg)
 
-    def append(self, txt):
+    def append(self, data):
+        txt = str(data, 'utf8')
+        if self.escape_flag:
+            return
         tc = self.textCursor()
         tc.movePosition(QTextCursor.End)
         self.setTextCursor(tc)
-        self.insertPlainText(str(txt, 'utf8'))
+        self.insertPlainText(txt)
         self.ensureCursorVisible()
+
+    def delete(self):
+        tc = self.textCursor()
+        block_text = tc.block().text()
+        if not (block_text.startswith('>>> ') or
+                block_text.startswith('... ')):
+            return
+        if block_text in [">>> ", "... "]:
+            return
+        tc.deletePreviousChar()
 
     def clear(self):
         self.setText('')
