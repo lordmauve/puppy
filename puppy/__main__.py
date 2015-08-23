@@ -81,7 +81,7 @@ def main():
     # Show the splash.
     splash.show()
 
-    # Make the editor with the Brian class defined above.
+    # Make the editor with the Puppy class defined above.
     the_editor = Puppy()
 
     proj_root = os.path.join(ROOT, 'hello_world')

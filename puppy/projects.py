@@ -3,7 +3,7 @@ import os
 from jinja2 import Environment, PackageLoader
 from .ui.editor import Editor
 from .ui.outputpane import OutputPane
-from .ui.replpane import REPLPane
+from .ui.replpane import REPLPane, find_microbit
 from .resources import load_svg
 
 # The encoding to use for reading/writing files
@@ -62,8 +62,12 @@ class HelloWorld(Project):
         self.ui.add_tab('hello_world.py')
         self.outputpane = OutputPane(parent=self.ui)
         self.ui.add_pane(self.outputpane)
-        self.replpane = REPLPane(port='/dev/ttyACM0', parent=self.ui)
-        self.ui.add_pane(self.replpane)
+        mb_port = find_microbit()
+        if mb_port:
+            port = '/dev/{}'.format(mb_port)
+            print(port)
+            self.replpane = REPLPane(port=port, parent=self.ui)
+            self.ui.add_pane(self.replpane)
         return self.ui
 
     def run(self):
