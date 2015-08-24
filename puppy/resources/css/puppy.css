@@ -4,3 +4,15 @@
   font-family: monospace;
   padding: 0.3em;
 }
+
+QTabBar::tab {
+  padding: 0.3em 0.6em;
+  border-top-left-radius: 0.2em;
+  border-top-right-radius: 0.2em;
+  border: 1px solid silver;
+  border-bottom-style: none;
+}
+
+QTabBar::tab:!selected {
+  background: silver;
+}
