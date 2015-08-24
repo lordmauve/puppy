@@ -39,9 +39,6 @@ class REPLPane(QTextEdit):
         self.setReadOnly(False)
         self.setLineWrapMode(QTextEdit.NoWrap)
         self.setObjectName('replpane')
-        # A flag to indicate that we've sent some sort of escape
-        # character e.g. \b
-        self.escape_flag = False
 
         # open the serial port
         self.serial = QSerialPort(self)
@@ -49,32 +46,68 @@ class REPLPane(QTextEdit):
         self.serial.setBaudRate(115200)
         print(self.serial.open(QIODevice.ReadWrite))
         self.serial.readyRead.connect(self.on_serial_read)
+        self.serial_input_buffer = b''
 
         # clear the text
         self.clear()
 
     def on_serial_read(self):
-        self.append(self.serial.readAll())
+        self.process_bytes(bytes(self.serial.readAll()))
 
     def keyPressEvent(self, data):
-        self.escape_flag = False
         text = data.text()
         msg = bytes(text, 'utf8')
         key = data.key()
         if key == Qt.Key_Backspace:
-            msg = '\b'
-            self.delete()
-            self.escape_flag = True
+            msg = b'\b'
         elif key == Qt.Key_Up:
-            msg = '\x1B[A'
+            msg = b'\x1B[A'
         elif key == Qt.Key_Down:
-            msg = '\x1B[B'
+            msg = b'\x1B[B'
+        elif key == Qt.Key_Right:
+            msg = b'\x1B[C'
+        elif key == Qt.Key_Left:
+            msg = b'\x1B[D'
         self.serial.write(msg)
 
-    def append(self, data):
-        txt = str(data, 'utf8')
-        if self.escape_flag:
-            return
+    def process_bytes(self, bs):
+        bs = self.serial_input_buffer + bs
+        while len(bs):
+            num_use = 0
+            if bs[0] == 8: # backspace
+                self.delete()
+                num_use = 1
+            elif bs[0] == 13: # \r
+                # ignore
+                num_use = 1
+            elif bs[0] == 27: # escape
+                if bs.startswith(b'\x1b[K'):
+                    # kill to end of line
+                    num_use = 3
+                elif bs.startswith(b'\x1b[') and len(bs) >= 3 and chr(bs[2]).isdigit():
+                    n = bs[2] - ord('0')
+                    cmd_idx = 3
+                    if len(bs) >= 4 and chr(bs[3]).isdigit():
+                        n = 10 * n + bs[3] - ord('0')
+                        cmd_idx = 4
+                    if cmd_idx < len(bs):
+                        if bs[cmd_idx] == ord('D'):
+                            # backspace n chars
+                            for i in range(n):
+                                self.delete()
+                            num_use = cmd_idx + 1
+                if num_use == 0:
+                    # unknown or incomplete escape sequence
+                    print(bs)
+            else:
+                self.append(chr(bs[0]))
+                num_use = 1
+            if num_use == 0:
+                break
+            bs = bs[num_use:]
+        self.serial_input_buffer = bs
+
+    def append(self, txt):
         tc = self.textCursor()
         tc.movePosition(QTextCursor.End)
         self.setTextCursor(tc)
@@ -83,12 +116,6 @@ class REPLPane(QTextEdit):
 
     def delete(self):
         tc = self.textCursor()
-        block_text = tc.block().text()
-        if not (block_text.startswith('>>> ') or
-                block_text.startswith('... ')):
-            return
-        if block_text in [">>> ", "... "]:
-            return
         tc.deletePreviousChar()
 
     def clear(self):
