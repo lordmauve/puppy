@@ -1,5 +1,6 @@
 import os.path
 import os
+from configparser import ConfigParser
 from jinja2 import Environment, PackageLoader
 from .ui.editor import Editor
 from .ui.outputpane import OutputPane
@@ -8,6 +9,7 @@ from .resources import load_svg
 
 # The encoding to use for reading/writing files
 ENCODING = 'utf8'
+
 
 env = Environment(
     loader=PackageLoader(__name__, 'templates')

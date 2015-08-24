@@ -16,3 +16,7 @@ QTabBar::tab {
 QTabBar::tab:!selected {
   background: silver;
 }
+
+#projectchoosertabs {
+  max-width: 20em;
+}

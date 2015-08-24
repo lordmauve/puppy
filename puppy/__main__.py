@@ -24,6 +24,8 @@ from PyQt5.QtWidgets import (
 
 from .resources import load_icon, load_pixmap, load_stylesheet
 from .projects import HelloWorld
+from .project_manager import ProjectManager
+from .ui.projectmanagerpane import ProjectManagerPane
 
 # We should probably create a default directory within this directory.
 ROOT = os.path.expanduser('~/puppy-projects/')
@@ -41,7 +43,9 @@ class Puppy(QStackedWidget):
 
         # Ensure we have a minimal sensible size for the application.
         self.setMinimumSize(800, 600)
-        self.projects = {}
+        self.project_manager = ProjectManager(ROOT)
+        self.open_projects = {}
+        self.addWidget(ProjectManagerPane(self, self.project_manager))
 
     def update_title(self, project=None):
         title = "Puppy IDE"
@@ -51,10 +55,12 @@ class Puppy(QStackedWidget):
 
     def add_project(self, project):
         """Add a project to the UI and show it."""
-        if project.name in self.projects:
+        if project.name in self.open_projects:
             return
-        self.projects[project.name] = project
-        self.addWidget(project.build_ui(self))
+        self.open_projects[project.name] = project
+        ui = project.build_ui(self)
+        self.addWidget(ui)
+        self.setCurrentWidget(ui)
         self.update_title(project)
 
     def autosize_window(self):
@@ -83,12 +89,6 @@ def main():
 
     # Make the editor with the Puppy class defined above.
     the_editor = Puppy()
-
-    proj_root = os.path.join(ROOT, 'hello_world')
-    proj = HelloWorld(proj_root, {})
-    if not os.path.isdir(proj_root):
-        proj.init_files()
-    the_editor.add_project(proj)
 
     the_editor.show()
     the_editor.autosize_window()
