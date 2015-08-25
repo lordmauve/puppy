@@ -57,11 +57,20 @@ class Puppy(QStackedWidget):
         """Add a project to the UI and show it."""
         if project.name in self.open_projects:
             return
-        self.open_projects[project.name] = project
+
         ui = project.build_ui(self)
+        self.open_projects[project.name] = ui
+
         self.addWidget(ui)
         self.setCurrentWidget(ui)
         self.update_title(project)
+
+    def close_project(self, project):
+        if project.name not in self.open_projects:
+            return
+        ui = self.open_projects.pop(project.name)
+        self.removeWidget(ui)
+        self.update_title()
 
     def autosize_window(self):
         screen = QDesktopWidget().screenGeometry()

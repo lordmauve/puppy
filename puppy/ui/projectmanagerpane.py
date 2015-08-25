@@ -69,7 +69,6 @@ class ProjectManagerPane(QWidget):
 
     def tab_changed(self, index):
         """Called when the active tab is changed."""
-        print("Selected tab", index)
         if self.tabs.tabText(index) == "New Project":
             self.selected_template()
         else:
@@ -81,7 +80,10 @@ class ProjectManagerPane(QWidget):
         self.action = None
 
     def selected_project(self, *args):
-        key = self.projects.currentItem().text()
+        current = self.projects.currentItem()
+        if not current:
+            return
+        key = current.text()
         project = self.projlist[key]
         tmpl = env.get_template('project_details.html')
         self.details.setText(tmpl.render(project=project))
@@ -89,7 +91,10 @@ class ProjectManagerPane(QWidget):
         self.action = partial(self.open_project, project)
 
     def selected_template(self, *args):
-        key = self.templates.currentItem().text()
+        current = self.templates.currentItem()
+        if not current:
+            return
+        key = current.text()
         tmpl = env.get_template('template_details.html')
         project = next(p for p in PROJECTS if p.NAME == key)
         self.details.setText(tmpl.render(project=project))

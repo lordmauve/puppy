@@ -27,6 +27,12 @@ class ButtonBar(QToolBar):
         self.setContextMenuPolicy(Qt.PreventContextMenu)
         self.setObjectName("StandardToolBar")
         # Create actions to be added to the button bar.
+        self.close_project_act = QAction(
+            load_icon("quit"),
+            "Close", self,
+            statusTip="Save and close this project",
+            triggered=self.editor.close)
+
         self.save_python_file_act = QAction(
             load_icon("save"),
             "Save", self,
@@ -55,6 +61,7 @@ class ButtonBar(QToolBar):
 
         # Add the actions to the button bar.
 
+        self.addAction(self.close_project_act)
         self.addAction(self.save_python_file_act)
         self.addAction(self.run_python_file_act)
         # self.addAction(self.build_python_file_act)
@@ -145,15 +152,22 @@ class Editor(QWidget):
         scrollpane.setWidget(svg)
         self.tabs.addTab(scrollpane, title)
 
+    def close(self):
+        """Close this project."""
+        self.save_all()
+        self.parentWidget().close_project(self.project)
+
     def zoom_in(self):
         """Make the text BIGGER."""
         for tab in self.tabs:
-            tab.zoomIn(2)
+            if hasattr(tab, 'zoomIn'):
+                tab.zoomIn(2)
 
     def zoom_out(self):
         """Make the text smaller."""
         for tab in self.tabs:
-            tab.zoomOut(2)
+            if hasattr(tab, 'zoomOut'):
+                tab.zoomOut(2)
 
     def save_all(self):
         """Save all files."""
