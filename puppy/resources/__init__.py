@@ -1,6 +1,11 @@
 from pkg_resources import resource_filename, resource_string
 
 from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtCore import QDir
+
+QDir.addSearchPath('images', resource_filename(__name__, 'images'))
+QDir.addSearchPath('css', resource_filename(__name__, 'css'))
+QDir.addSearchPath('svg', resource_filename(__name__, 'svg'))
 
 
 def path(name):
