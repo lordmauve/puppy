@@ -20,3 +20,11 @@ QTabBar::tab:!selected {
 #projectchoosertabs {
   max-width: 20em;
 }
+
+QSplitter::handle:vertical {
+  height: 16px;
+}
+
+QSplitter::handle:horizontal {
+  width: 16px;
+}
