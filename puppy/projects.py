@@ -1,5 +1,6 @@
 import os.path
 import os
+import datetime
 from configparser import ConfigParser
 from jinja2 import Environment, PackageLoader
 from .ui.editor import Editor
@@ -33,10 +34,22 @@ class Project:
         with open(self.abspath(path), 'w', encoding=ENCODING) as f:
             f.write(data)
 
-    def from_template(self, path_template, contents_template_name):
+    def ensure_root(self):
+        """Ensure the root directory for this project exists."""
+        try:
+            os.makedirs(self.root)
+        except FileExistsError:
+            pass
+
+    def from_template(self, path_template, contents_template_name, **params):
         """Render a templated source file to theself project directory."""
         tmpl = env.get_template(contents_template_name)
-        contents = tmpl.render(**self.metadata)
+        template_params = {
+            'project': self,
+        }
+        template_params.update(self.metadata)
+        template_params.update(params)
+        contents = tmpl.render(**template_params)
         path = path_template.format(**self.metadata)
         self.write_file(path, contents)
 
@@ -52,10 +65,7 @@ class HelloWorld(Project):
 
     def init_files(self):
         """Create the files for the project."""
-        try:
-            os.makedirs(self.root)
-        except FileExistsError:
-            pass
+        self.ensure_root()
         self.from_template('hello_world.py', 'hello_world.py.tmpl')
 
     def build_ui(self, parent=None):
@@ -77,7 +87,50 @@ class HelloWorld(Project):
         self.outputpane.run('python3', 'hello_world.py', cwd=self.root)
 
 
+class PythonScript(Project):
+    NAME = "Python Script"
+    DESCRIPTION = """
+    Create a Python program.
+
+    This is suitable for processing text input, generating output, or
+    manipulating files on disk.
+
+    """
+
+    def __init__(self, root, metadata):
+        super().__init__(root, metadata)
+        if 'py_file' not in self.metadata:
+            self.metadata['py_file'] = self.name + '.py'
+
+    @property
+    def py_file(self):
+        return self.metadata['py_file']
+
+    def init_files(self):
+        """Create the files for the project."""
+        self.ensure_root()
+        self.from_template(
+            self.py_file,
+            'py_file.py.tmpl',
+            date=datetime.date.today()
+        )
+        self.from_template('README.md', 'readme.md.tmpl')
+
+    def build_ui(self, parent=None):
+        self.ui = Editor(self, parent=parent)
+        self.outputpane = OutputPane()
+        self.ui.add_tab('README.md')
+        self.ui.add_tab(self.py_file)
+        self.ui.add_pane(self.outputpane)
+        return self.ui
+
+    def run(self):
+        self.ui.save_all()
+        self.outputpane.run('python3', self.py_file, cwd=self.root)
+
+
 # This is a list of all the project templates we know how to build
 PROJECTS = [
     HelloWorld,
+    PythonScript,
 ]

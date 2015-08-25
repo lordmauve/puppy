@@ -49,11 +49,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="375.83716"
-     inkscape:cy="818.73937"
+     inkscape:zoom="8"
+     inkscape:cx="218.98928"
+     inkscape:cy="782.78094"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g5705"
      showgrid="true"
      inkscape:window-width="3070"
      inkscape:window-height="1752"
@@ -338,6 +338,124 @@
          cx="176.51152"
          cy="76.996788"
          r="4.3310289" />
+    </g>
+    <g
+       id="g5699"
+       transform="matrix(2,0,0,2,-205.27507,-285.11451)"
+       inkscape:export-filename="/home/mauve/dev/puppy/puppy/resources/images/vsplitter.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <use
+         inkscape:export-ydpi="90"
+         inkscape:export-xdpi="90"
+         inkscape:export-filename="/home/mauve/dev/puppy/puppy/resources/images/vsplitter.png"
+         height="100%"
+         width="100%"
+         transform="matrix(0.25,0,0,0.25,189.25297,262.02396)"
+         id="use5663"
+         xlink:href="#g3344"
+         y="0"
+         x="0" />
+      <g
+         inkscape:export-ydpi="90"
+         inkscape:export-xdpi="90"
+         inkscape:export-filename="/home/mauve/dev/puppy/puppy/resources/images/vsplitter.png"
+         transform="matrix(0.25,0,0,0.25,160.09688,207.43952)"
+         id="g5695">
+        <path
+           transform="matrix(0.54898266,0,0,0.61768277,160.01043,228.69454)"
+           d="m 96,52.362198 13.85641,24 -27.712817,0 z"
+           inkscape:randomized="0"
+           inkscape:rounded="0"
+           inkscape:flatsided="true"
+           sodipodi:arg2="-0.52359875"
+           sodipodi:arg1="-1.5707963"
+           sodipodi:r2="8"
+           sodipodi:r1="16"
+           sodipodi:cy="68.362198"
+           sodipodi:cx="96"
+           sodipodi:sides="3"
+           id="path3340-2"
+           style="opacity:1;fill:#ffffff;stroke:none;stroke-width:1"
+           sodipodi:type="star"
+           inkscape:transform-center-y="-0.94373238" />
+        <path
+           inkscape:transform-center-y="0.94373082"
+           sodipodi:type="star"
+           style="opacity:1;fill:#ffffff;stroke:none;stroke-width:1"
+           id="path5693"
+           sodipodi:sides="3"
+           sodipodi:cx="96"
+           sodipodi:cy="68.362198"
+           sodipodi:r1="16"
+           sodipodi:r2="8"
+           sodipodi:arg1="-1.5707963"
+           sodipodi:arg2="-0.52359875"
+           inkscape:flatsided="true"
+           inkscape:rounded="0"
+           inkscape:randomized="0"
+           d="m 96,52.362198 13.85641,24 -27.712817,0 z"
+           transform="matrix(0.54898266,0,0,-0.61768277,160.01043,328.70538)" />
+      </g>
+    </g>
+    <g
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/home/mauve/dev/puppy/puppy/resources/images/vsplitter.png"
+       transform="matrix(2,0,0,2,-158.15007,-285.11451)"
+       id="g5705">
+      <use
+         x="0"
+         y="0"
+         xlink:href="#g3344"
+         id="use5707"
+         transform="matrix(0.25,0,0,0.25,189.25297,262.02396)"
+         width="100%"
+         height="100%"
+         inkscape:export-filename="/home/mauve/dev/puppy/puppy/resources/images/hsplitter.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90" />
+      <g
+         id="g5709"
+         transform="matrix(0,0.25,-0.25,0,282.95006,223.93632)"
+         inkscape:export-filename="/home/mauve/dev/puppy/puppy/resources/images/vsplitter.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
+        <path
+           inkscape:transform-center-y="-0.94373238"
+           sodipodi:type="star"
+           style="opacity:1;fill:#ffffff;stroke:none;stroke-width:1"
+           id="path5711"
+           sodipodi:sides="3"
+           sodipodi:cx="96"
+           sodipodi:cy="68.362198"
+           sodipodi:r1="16"
+           sodipodi:r2="8"
+           sodipodi:arg1="-1.5707963"
+           sodipodi:arg2="-0.52359875"
+           inkscape:flatsided="true"
+           inkscape:rounded="0"
+           inkscape:randomized="0"
+           d="m 96,52.362198 13.85641,24 -27.712817,0 z"
+           transform="matrix(0.54898266,0,0,0.61768277,160.01043,228.69454)" />
+        <path
+           transform="matrix(0.54898266,0,0,-0.61768277,160.01043,328.70538)"
+           d="m 96,52.362198 13.85641,24 -27.712817,0 z"
+           inkscape:randomized="0"
+           inkscape:rounded="0"
+           inkscape:flatsided="true"
+           sodipodi:arg2="-0.52359875"
+           sodipodi:arg1="-1.5707963"
+           sodipodi:r2="8"
+           sodipodi:r1="16"
+           sodipodi:cy="68.362198"
+           sodipodi:cx="96"
+           sodipodi:sides="3"
+           id="path5713"
+           style="opacity:1;fill:#ffffff;stroke:none;stroke-width:1"
+           sodipodi:type="star"
+           inkscape:transform-center-y="0.94373082" />
+      </g>
     </g>
   </g>
 </svg>
