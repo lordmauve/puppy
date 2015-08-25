@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QTabWidget, QToolBar, QAction, QSizePolicy
+    QWidget, QVBoxLayout, QTabWidget, QToolBar, QAction, QSizePolicy, QScrollArea,
+    QSplitter
 )
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtSvg import QSvgWidget
@@ -119,14 +120,16 @@ class Editor(QWidget):
         self.buttons = ButtonBar(self)
         self.tabs = TabPane(parent=self)
 
+        self.splitter = QSplitter(Qt.Vertical)
         # Add the buttons and editor to the user inteface.
         self.layout.addWidget(self.buttons)
-        self.layout.addWidget(self.tabs)
+        self.layout.addWidget(self.splitter)
+        self.splitter.addWidget(self.tabs)
         # Ensure we have a minimal sensible size for the application.
         self.setMinimumSize(800, 600)
 
     def add_pane(self, pane):
-        self.layout.addWidget(pane)
+        self.splitter.addWidget(pane)
 
     def add_tab(self, path):
         text = self.project.read_file(path)
@@ -136,9 +139,11 @@ class Editor(QWidget):
         self.tabs.addTab(editor, path)
 
     def add_svg(self, title, data):
-        editor = QSvgWidget()
-        editor.load(data)
-        self.tabs.addTab(editor, title)
+        svg = QSvgWidget()
+        svg.load(data)
+        scrollpane = QScrollArea()
+        scrollpane.setWidget(svg)
+        self.tabs.addTab(scrollpane, title)
 
     def zoom_in(self):
         """Make the text BIGGER."""
