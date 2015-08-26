@@ -79,7 +79,7 @@ class PythonLexer(QsciLexerPython):
             kws = __builtins__.keys()
         else:
             return None
-        print("keyword set %s:" % flag, ' '.join(kws))
+
         return ' '.join(kws)
 
 

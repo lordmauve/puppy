@@ -1,7 +1,6 @@
 import os.path
 import os
 import datetime
-from configparser import ConfigParser
 from jinja2 import Environment, PackageLoader
 from .ui.editor import Editor
 from .ui.outputpane import OutputPane
