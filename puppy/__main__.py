@@ -23,7 +23,6 @@ from PyQt5.QtWidgets import (
 )
 
 from .resources import load_icon, load_pixmap, load_stylesheet
-from .projects import HelloWorld
 from .project_manager import ProjectManager
 from .ui.projectmanagerpane import ProjectManagerPane
 

@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QTabWidget, QToolBar, QAction, QSizePolicy, QScrollArea,
+    QWidget, QVBoxLayout, QTabWidget, QToolBar, QAction, QScrollArea,
     QSplitter
 )
 from PyQt5.QtCore import Qt, QSize
@@ -140,9 +140,7 @@ class Editor(QWidget):
 
     def add_tab(self, path):
         text = self.project.read_file(path)
-        editor = EditorPane()
-        editor.path = path
-        editor.setText(text)
+        editor = EditorPane(path, text)
         self.tabs.addTab(editor, path)
 
     def add_svg(self, title, data):

@@ -1,11 +1,12 @@
 import sys
 import keyword
+import os.path
 from PyQt5.Qsci import QsciScintilla, QsciLexerPython
 from PyQt5.QtGui import QColor, QFont
 
 
 # FONT related constants:
-DEFAULT_FONT_SIZE = 12
+DEFAULT_FONT_SIZE = 11
 DEFAULT_FONT = 'Bitstream Vera Sans Mono'
 # Platform specific alternatives...
 if sys.platform == 'win32':
@@ -14,94 +15,72 @@ elif sys.platform == 'darwin':
     DEFAULT_FONT = 'Monaco'
 
 
+class Font:
+    def __init__(self, color='black', paper='white', bold=False, italic=False):
+        self.color = color
+        self.paper = paper
+        self.bold = bold
+        self.italic = italic
+
+ALL_STYLES = -1
+
+
+class Theme:
+    @classmethod
+    def apply_to(cls, lexer):
+        # Apply a font for all styles
+        font = QFont(DEFAULT_FONT, DEFAULT_FONT_SIZE)
+        font.setBold(False)
+        font.setItalic(False)
+        lexer.setFont(font, ALL_STYLES)
+
+        for name, font in cls.__dict__.items():
+            if not isinstance(font, Font):
+                continue
+
+            style_num = getattr(lexer, name)
+            lexer.setColor(QColor(font.color), style_num)
+            lexer.setEolFill(True, style_num)
+            lexer.setPaper(QColor(font.paper), style_num)
+            if font.bold or font.italic:
+                f = QFont(DEFAULT_FONT, DEFAULT_FONT_SIZE)
+                f.setBold(font.bold)
+                f.setItalic(font.italic)
+                lexer.setFont(f, style_num)
+
+
+class PythonTheme(Theme):
+    FunctionMethodName = ClassName = Font(color='#0000a0')
+    UnclosedString = Font(paper='#00fd00')
+    Comment = CommentBlock = Font(color='gray')
+    Keyword = Font(color='#008080', bold=True)
+    SingleQuotedString = DoubleQuotedString = Font(color='#800000')
+    TripleSingleQuotedString = TripleDoubleQuotedString = Font(color='#060')
+    Number = Font(color='#00008B')
+    Decorator = Font(color='#cc6600')
+    Default = Identifier = Font()
+    Operator = Font(color='#400040')
+    HighlightedIdentifier = Font(color='#0000a0')
+
+
 class PythonLexer(QsciLexerPython):
-    """
-    Defines the styles associated with various types of token used in Python.
-    """
-
-    # The names of tokens and their associated id used by Scintilla
-    # (apparently).
-    token_id = {
-        'Default': 0,
-        'Comment': 1,
-        'Number': 2,
-        'DoubleQuotedString': 3,
-        'SingleQuotedString': 4,
-        'Keyword': 5,
-        'TripleSingleQuotedString': 6,
-        'TripleDoubleQuotedString': 7,
-        'ClassName': 8,
-        'FunctionMethodName': 9,
-        'Operator': 10,
-        'Identifier': 11,
-        'CommentBlock': 12,
-        'UnclosedString': 13,
-        'HighlightedIdentifier': 14,
-        'Decorator': 15,
-    }
-
-    # Each token type is associated with a list containing the font to use,
-    # the font colour, the font size, bold flag, italic flag, and background
-    # colour.
-    default_style = {
-        'UnclosedString': [DEFAULT_FONT, '#000000', DEFAULT_FONT_SIZE, False,
-                           False, '#00fd00'],
-        'Decorator': [DEFAULT_FONT, '#00cc00', DEFAULT_FONT_SIZE, False, False,
-                      '#ffffff'],
-        'Default': [DEFAULT_FONT, '#000000', DEFAULT_FONT_SIZE, False, False,
-                    '#ffffff'],
-        'HighlightedIdentifier': [DEFAULT_FONT, '#900090', DEFAULT_FONT_SIZE,
-                                  False, False, '#ffffff'],
-        'CommentBlock': [DEFAULT_FONT, '#0000ff', DEFAULT_FONT_SIZE, False,
-                         False, '#ffffff'],
-        'FunctionMethodName': [DEFAULT_FONT, '#0000ff', DEFAULT_FONT_SIZE,
-                               False, False, '#ffffff'],
-        'DoubleQuotedString': [DEFAULT_FONT, '#00aa00', DEFAULT_FONT_SIZE,
-                               False, False, '#ffffff'],
-        'Operator': [DEFAULT_FONT, '#000000', DEFAULT_FONT_SIZE, False, False,
-                     '#ffffff'],
-        'TripleSingleQuotedString': [DEFAULT_FONT, '#00aa00',
-                                     DEFAULT_FONT_SIZE, False, False,
-                                     '#ffffff'],
-        'Number': [DEFAULT_FONT, '#000000', DEFAULT_FONT_SIZE, False, False,
-                   '#ffffff'],
-        'Keyword': [DEFAULT_FONT, '#0000ff', DEFAULT_FONT_SIZE, False, False,
-                    '#ffffff'],
-        'Identifier': [DEFAULT_FONT, '#000000', DEFAULT_FONT_SIZE, False,
-                       False, '#ffffff'],
-        'ClassName': [DEFAULT_FONT, '#0000ff', DEFAULT_FONT_SIZE, False, False,
-                      '#ffffff'],
-        'SingleQuotedString': [DEFAULT_FONT, '#00aa00', DEFAULT_FONT_SIZE,
-                               False, False, '#ffffff'],
-        'TripleDoubleQuotedString': [DEFAULT_FONT, '#00aa00',
-                                     DEFAULT_FONT_SIZE, False, False,
-                                     '#ffffff'],
-        'Comment': [DEFAULT_FONT, '#0000ff', DEFAULT_FONT_SIZE, False, False,
-                    '#ffffff']
-    }
-
-    def __init__(self):
-        QsciLexerPython.__init__(self)
-        for key, attrib in self.default_style.items():
-            value = self.token_id[key]
-            self.setColor(QColor(attrib[1]), value)
-            self.setEolFill(True, value)
-            self.setPaper(QColor(attrib[5]), value)
-            self.setPaper(QColor(attrib[5]), value)
-
-            font = QFont(attrib[0], attrib[2])
-            font.setBold(attrib[3])
-            font.setItalic(attrib[4])
-            self.setFont(font, value)
-        self.setDefaultPaper(QColor("#ffffff"))
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setHighlightSubidentifiers(False)
 
     def keywords(self, flag):
         """
         Returns a list of Python keywords.
         """
+
         if flag == 1:
-            return ' '.join(keyword.kwlist)
-        return ' '.join(dir(__builtins__))
+            kws = keyword.kwlist + ['self', 'cls']
+        elif flag == 2:
+            kws = __builtins__.keys()
+        else:
+            return None
+        print("keyword set %s:" % flag, ' '.join(kws))
+        return ' '.join(kws)
 
 
 class EditorPane(QsciScintilla):
@@ -109,8 +88,10 @@ class EditorPane(QsciScintilla):
     Represents the text editor.
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, path, text):
+        super().__init__()
+        self.path = path
+        self.setText(text)
         self.configure()
 
     def configure(self):
@@ -131,9 +112,17 @@ class EditorPane(QsciScintilla):
         self.setMarginWidth(0, 50)
         self.setBraceMatching(QsciScintilla.SloppyBraceMatch)
         # Use the lexer defined above (and must save a reference to it)
-        self.lexer = PythonLexer()
+        self.lexer = self.choose_lexer()
         self.setLexer(self.lexer)
         self.SendScintilla(QsciScintilla.SCI_SETHSCROLLBAR, 0)
+
+    def choose_lexer(self):
+        _, ext = os.path.splitext(self.path)
+        if ext == '.py':
+            lex = PythonLexer()
+            PythonTheme.apply_to(lex)
+            return lex
+        return None
 
     def needs_write(self):
         return self.isModified()
