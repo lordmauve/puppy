@@ -13,6 +13,8 @@ class ProjectManager:
     """Manage the list of existing projects."""
     def __init__(self, root):
         self.root = root
+        if not os.path.exists(self.root):
+            os.makedirs(self.root)
 
     def __iter__(self):
         """Iterate over the names of existing projects, yielding strings."""
