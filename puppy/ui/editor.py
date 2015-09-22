@@ -119,7 +119,6 @@ class Editor(QWidget):
         super().__init__(parent)
         self.project = project
 
-        # Gotta have a nice icon.
         # Vertical box layout.
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)

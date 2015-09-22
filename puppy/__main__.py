@@ -91,7 +91,7 @@ def main():
     # A splash screen is a logo that appears when you start up the application.
     # The image to be "splashed" on your screen is in the resources/images
     # directory.
-    splash = QSplashScreen(load_pixmap('splash'))
+    splash = QSplashScreen(load_pixmap('icon'))
     # Show the splash.
     splash.show()
 
